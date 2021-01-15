@@ -1,0 +1,15 @@
+D:\Programs\Reloaded 2\Mods\p4gpc.xpshare\p4gpc.xpshare.exe
+D:\Programs\Reloaded 2\Mods\p4gpc.xpshare\ModConfig.json
+D:\Programs\Reloaded 2\Mods\p4gpc.xpshare\p4gpc.xpshare.deps.json
+D:\Programs\Reloaded 2\Mods\p4gpc.xpshare\p4gpc.xpshare.runtimeconfig.json
+D:\Programs\Reloaded 2\Mods\p4gpc.xpshare\p4gpc.xpshare.runtimeconfig.dev.json
+D:\Programs\Reloaded 2\Mods\p4gpc.xpshare\p4gpc.xpshare.dll
+D:\Programs\Reloaded 2\Mods\p4gpc.xpshare\p4gpc.xpshare.pdb
+D:\Documents\GitHub\Persona-4-Golden-Xp-Share\p4gpc.xpshare\obj\Debug\p4gpc.xpshare.AssemblyInfoInputs.cache
+D:\Documents\GitHub\Persona-4-Golden-Xp-Share\p4gpc.xpshare\obj\Debug\p4gpc.xpshare.AssemblyInfo.cs
+D:\Documents\GitHub\Persona-4-Golden-Xp-Share\p4gpc.xpshare\obj\Debug\p4gpc.xpshare.csproj.CoreCompileInputs.cache
+D:\Documents\GitHub\Persona-4-Golden-Xp-Share\p4gpc.xpshare\obj\Debug\p4gpc.xpshare.csproj.CopyComplete
+D:\Documents\GitHub\Persona-4-Golden-Xp-Share\p4gpc.xpshare\obj\Debug\p4gpc.xpshare.dll
+D:\Documents\GitHub\Persona-4-Golden-Xp-Share\p4gpc.xpshare\obj\Debug\p4gpc.xpshare.pdb
+D:\Documents\GitHub\Persona-4-Golden-Xp-Share\p4gpc.xpshare\obj\Debug\p4gpc.xpshare.genruntimeconfig.cache
+D:\Documents\GitHub\Persona-4-Golden-Xp-Share\p4gpc.xpshare\obj\Debug\p4gpc.xpshare.csprojAssemblyReference.cache
