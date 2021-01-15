@@ -15,6 +15,7 @@ using Reloaded.Memory;
 using System.Linq;
 using Reloaded.Memory.Sigscan;
 using System.Drawing;
+using System.Collections;
 
 namespace p4gpc.xpshare
 {
@@ -128,30 +129,49 @@ namespace p4gpc.xpshare
                 StructArray.FromPtr((IntPtr)77448132 + _baseAddress, out short[] inParty, 3);
                 LogVerbose("These are in the party: " + memberNames[inParty[0]] + ", " + memberNames[inParty[1]] + ", " +  memberNames[inParty[2]]);
 
-                // Work out which party members are unlocked
-                int memberLocation = 77451448 + _baseAddress;
-                short[] unlockedParty = new short[7];
-                for (int i = 0; i < 7; i++)
+                // Get the current day and use that to determine who is unlocked
+                int dayAddress = 77454492 + _baseAddress;
+                _memory.SafeRead((IntPtr)dayAddress, out short day);
+                ArrayList unlockedParty = new ArrayList();
+                // Yosuke
+                if(day >= 17)
                 {
-                    _memory.SafeRead((IntPtr)memberLocation, out (short flag, short id) member);
-
-                    LogVerbose(memberNames[member.id] + " has flag " + member.flag.ToString());
-
-                    if (member.flag != 0)
-                    {
-                        unlockedParty[i] = member.id;
-                    }
-                    memberLocation += 132;
+                    unlockedParty.Add((short)2);
+                }
+                // Chie
+                if(day >= 18)
+                {
+                    unlockedParty.Add((short)3);
+                }
+                // Yukiko
+                if(day >= 30)
+                {
+                    unlockedParty.Add((short)4);
+                }
+                // Kanji
+                if (day >= 66)
+                {
+                    unlockedParty.Add((short)6);
+                }
+                // Naoto
+                if(day >= 189)
+                {
+                    unlockedParty.Add((short)7);
+                }
+                // Teddie
+                if(day >= 101)
+                {
+                    unlockedParty.Add((short)8);
                 }
 
                 // Work out which members are therefore eligible to get xp 
-                short[] inactiveParty = unlockedParty.Except(inParty).ToArray();
+                short[] inactiveParty = ((short[])unlockedParty.ToArray(typeof(short))).Except(inParty).ToArray();
 
                 // Add xp to them
                 int xpLocation = 77451540 + _baseAddress;
                 foreach (short member in inactiveParty)
                 {
-                    // Because I used a set length array there will be zeroes which aren't actual members so ignore them
+                    // If there isn't a full party there will be zeroes instead of member ids so ignore them
                     if(member > 0)
                     {
                         // Get their current xp
