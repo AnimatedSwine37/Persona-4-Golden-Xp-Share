@@ -1,2 +1,4 @@
 .vs
-p4gpc.xpshare/obj/
+obj/
+bin/
+Publish/
