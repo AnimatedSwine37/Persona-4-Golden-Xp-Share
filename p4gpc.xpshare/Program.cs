@@ -84,14 +84,12 @@ namespace p4gpc.xpshare
             long functionAddress;
             try
             {
-                Process thisProcess = Process.GetCurrentProcess();
+                using var thisProcess = Process.GetCurrentProcess();
                 LogVerbose("The process is: " + thisProcess);
-                Scanner scanner = new Scanner(thisProcess, thisProcess.MainModule);
+                using var scanner = new Scanner(thisProcess, thisProcess.MainModule);
                 _baseAddress = thisProcess.MainModule.BaseAddress.ToInt32();
                 functionAddress = scanner.CompiledFindPattern("D2 5F 5E 5B 89 EC 5D C3 00 00 00 00").Offset + 7 + _baseAddress;
                 LogVerbose("Found the function address at " + functionAddress);
-                // Dispose of the process
-                thisProcess.Dispose();
             }
             catch (Exception exception)
             {
