@@ -60,8 +60,8 @@ namespace p4gpc.xpshare
             }
             catch (Exception exception)
             {
-                _logger.WriteLine("[xpshare] An error occured trying to find the function address. Defaulting to an assumed one (may be incorrect causing errors\n[xpshare] " + exception.Message, Color.Red);
-                functionAddress = 0x226B11F4 + _baseAddress;
+                _logger.WriteLine("[xpshare] An error occured trying to find the function address. Not initializing." + exception.Message, Color.Red);
+                return;
             }
             
             string[] function =
@@ -78,8 +78,8 @@ namespace p4gpc.xpshare
         }
 
         // Provided for completeness.
-        public void Suspend() => _asmHook.Disable();
-        public void Resume()  => _asmHook.Enable();
+        public void Suspend() => _asmHook?.Disable();
+        public void Resume()  => _asmHook?.Enable();
 
         private void XpAdded(int esi)
         {
