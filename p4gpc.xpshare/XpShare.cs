@@ -39,6 +39,15 @@ namespace p4gpc.xpshare
         // Process base address; this is normally a constant 0x400000 unless ASLR gets suddenly enabled.
         private int _baseAddress;
 
+        // Address where the day is stored
+        private int _dayAddress;
+
+        // Address where the current xp ammount is stored
+        private int _xpAddress;
+
+        // Start address where all party information is
+        private IntPtr _partyAddress;
+
         // Provides logging functionality.
         private ILogger _logger;
 
@@ -52,15 +61,19 @@ namespace p4gpc.xpshare
             try
             {
                 using var thisProcess = Process.GetCurrentProcess();
-                LogVerbose("The process is: " + thisProcess);
                 using var scanner = new Scanner(thisProcess, thisProcess.MainModule);
                 _baseAddress = thisProcess.MainModule.BaseAddress.ToInt32();
-                functionAddress = scanner.CompiledFindPattern("D2 5F 5E 5B 89 EC 5D C3 00 00 00 00").Offset + 7 + _baseAddress;
+                // Find the necessary addresses
+                functionAddress = scanner.CompiledFindPattern("E9 ?? ?? ?? ?? 4D E9 06 35 E5 FF").Offset + _baseAddress;
+                // _dayAddress = scanner.CompiledFindPattern("").Offset + _baseAddress;
+                // _xpAddress = scanner.CompiledFindPattern("").Offset + _baseAddress;
+                //_partyAddress = (IntPtr)scanner.CompiledFindPattern("").Offset + _baseAddress;
+                // LogVerbose("Found the party address at " + _partyAddress);
                 LogVerbose("Found the function address at " + functionAddress);
             }
             catch (Exception exception)
             {
-                _logger.WriteLine("[xpshare] An error occured trying to find the function address. Not initializing." + exception.Message, Color.Red);
+                _logger.WriteLine("[xpshare] An error occured trying to find a function address. Not initializing. Please report this with information on the version of P4G you are running." + exception.Message, Color.Red);
                 return;
             }
             
@@ -85,12 +98,13 @@ namespace p4gpc.xpshare
         {
             try
             {
-                // TODO: You're looking for the function using signatures, however there are still hardcoded addresses down here. You either go in part way or all the way :P
+                // TODO Signature scan for these addresses as well
                 LogVerbose("Xp added starting");
                 // Get how much xp was added
                 _memory.SafeRead((IntPtr)(esi + 120), out int amountAdded);
                 LogVerbose("The protagonist gained " + amountAdded + " xp");
                 int amountToAdd = (int)(Math.Round(amountAdded * Math.Abs(Configuration.xpScale)));
+                if(amountToAdd == 0) return;
 
                 // Get who is in the party
                 StructArray.FromPtr((IntPtr)0x49DC3C4 + _baseAddress, out short[] inParty, 3);
