@@ -64,12 +64,12 @@ namespace p4gpc.xpshare
                 using var scanner = new Scanner(thisProcess, thisProcess.MainModule);
                 _baseAddress = thisProcess.MainModule.BaseAddress.ToInt32();
                 // Find the necessary addresses
-                functionAddress = scanner.CompiledFindPattern("E9 ?? ?? ?? ?? 4D E9 06 35 E5 FF").Offset + _baseAddress;
+                functionAddress = scanner.CompiledFindPattern("55 ?? ?? 83 EC 08 53 56 57 ?? ?? 89 55 ?? B9 ?? ?? ?? ?? E8 ?? ?? ?? ??").Offset + _baseAddress;
                 // _dayAddress = scanner.CompiledFindPattern("").Offset + _baseAddress;
                 // _xpAddress = scanner.CompiledFindPattern("").Offset + _baseAddress;
                 //_partyAddress = (IntPtr)scanner.CompiledFindPattern("").Offset + _baseAddress;
                 // LogVerbose("Found the party address at " + _partyAddress);
-                LogVerbose("Found the function address at " + functionAddress);
+                LogVerbose($"Found the function address at 0x{functionAddress:X}");
             }
             catch (Exception exception)
             {
@@ -158,7 +158,7 @@ namespace p4gpc.xpshare
             }
         }
 
-        private void LogVerbose(String message)
+        private void LogVerbose(string message)
         {
             if (Configuration.verbose)
             {
