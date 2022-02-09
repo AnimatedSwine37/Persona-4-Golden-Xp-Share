@@ -16,7 +16,7 @@ namespace p4gpc.xpshare.Configuration
 
         [DisplayName("Verbose Mode")]
         [Description("Logs non-error information, mainly about how much xp was added and to whom.")]
-        public bool verbose { get; set; } = false;
+        public bool Verbose { get; set; } = false;
 
         [DisplayName("Shared XP Scale")]
         [Description("All shared xp that is added is multplied by this (1.0 gives the same amount of XP that the protagnoist gained)")]

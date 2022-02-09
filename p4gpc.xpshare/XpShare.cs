@@ -31,7 +31,7 @@ namespace p4gpc.xpshare
         private IReverseWrapper<XpAddedFunction> _reverseWrapper;
 
         // For Reading/Writing Memory
-        private IMemory  _memory = new Memory();
+        private IMemory _memory;
 
         // For manipulating XP Share Hook.
         private IAsmHook _asmHook;
@@ -48,35 +48,21 @@ namespace p4gpc.xpshare
         // Start address where all party information is
         private IntPtr _partyAddress;
 
-        // Provides logging functionality.
-        private ILogger _logger;
+        // Provides utility stuff
+        Utils _utils;
 
-        public XpShare(ILogger logger, IReloadedHooks hooks, Config configuration)
+        public XpShare(Utils utils, IMemory memory, IReloadedHooks hooks, Config configuration)
         {
             Configuration = configuration;
-            _logger = logger;
+            _utils = utils;
+            _memory = memory;
 
             long functionAddress;
 
-            try
-            {
-                using var thisProcess = Process.GetCurrentProcess();
-                using var scanner = new Scanner(thisProcess, thisProcess.MainModule);
-                _baseAddress = thisProcess.MainModule.BaseAddress.ToInt32();
-                // Find the necessary addresses
-                functionAddress = scanner.CompiledFindPattern("55 ?? ?? 83 EC 08 53 56 57 ?? ?? 89 55 ?? B9 ?? ?? ?? ?? E8 ?? ?? ?? ??").Offset + _baseAddress;
-                // _dayAddress = scanner.CompiledFindPattern("").Offset + _baseAddress;
-                // _xpAddress = scanner.CompiledFindPattern("").Offset + _baseAddress;
-                //_partyAddress = (IntPtr)scanner.CompiledFindPattern("").Offset + _baseAddress;
-                // LogVerbose("Found the party address at " + _partyAddress);
-                LogVerbose($"Found the function address at 0x{functionAddress:X}");
-            }
-            catch (Exception exception)
-            {
-                _logger.WriteLine("[xpshare] An error occured trying to find a function address. Not initializing. Please report this with information on the version of P4G you are running." + exception.Message, Color.Red);
+            functionAddress = _utils.SigScan("55 ?? ?? 83 EC 08 53 56 57 ?? ?? 89 55 ?? B9 ?? ?? ?? ?? E8 ?? ?? ?? ??", "xp added");
+            if (functionAddress == -1)
                 return;
-            }
-            
+
             string[] function =
             {
                 $"use32",
@@ -99,16 +85,16 @@ namespace p4gpc.xpshare
             try
             {
                 // TODO Signature scan for these addresses as well
-                LogVerbose("Xp added starting");
+                _utils.LogDebug("Xp added starting");
                 // Get how much xp was added
                 _memory.SafeRead((IntPtr)(esi + 120), out int amountAdded);
-                LogVerbose("The protagonist gained " + amountAdded + " xp");
+                _utils.LogDebug("The protagonist gained " + amountAdded + " xp");
                 int amountToAdd = (int)(Math.Round(amountAdded * Math.Abs(Configuration.xpScale)));
                 if(amountToAdd == 0) return;
 
                 // Get who is in the party
                 StructArray.FromPtr((IntPtr)0x49DC3C4 + _baseAddress, out short[] inParty, 3);
-                LogVerbose("These are in the party: " + MemberNames[inParty[0]] + ", " + MemberNames[inParty[1]] + ", " +  MemberNames[inParty[2]]);
+                _utils.LogDebug("These are in the party: " + MemberNames[inParty[0]] + ", " + MemberNames[inParty[1]] + ", " +  MemberNames[inParty[2]]);
 
                 // Get the current day and use that to determine who is unlocked
                 int dayAddress = 0x49DDC9C + _baseAddress;
@@ -149,20 +135,12 @@ namespace p4gpc.xpshare
                     // Add the xp
                     // Xp location is the location of Yosuke's so remove 2 (Yosuke's id) from id
                     _memory.SafeWrite((IntPtr)xpLocation + (member - 2) * 132, currentXp + amountToAdd);
-                    LogVerbose("Added " + amountToAdd + " xp to " + MemberNames[member]);
+                    _utils.LogDebug("Added " + amountToAdd + " xp to " + MemberNames[member]);
                 }
             }
             catch (Exception exception)
             {
-                _logger.WriteLine("[xpshare] There was an error whilst trying to add xp\n[xpshare] " + exception.Message, _logger.ColorRed);
-            }
-        }
-
-        private void LogVerbose(string message)
-        {
-            if (Configuration.verbose)
-            {
-                _logger.WriteLine("[xpshare] " + message);
+                _utils.LogError("There was an error whilst trying to add xp", exception);
             }
         }
         

@@ -4,6 +4,8 @@ using Reloaded.Mod.Interfaces.Internal;
 using p4gpc.xpshare.Configuration;
 using p4gpc.xpshare.Configuration.Implementation;
 using IReloadedHooks = Reloaded.Hooks.ReloadedII.Interfaces.IReloadedHooks;
+using System.Diagnostics;
+using Reloaded.Memory.Sources;
 
 namespace p4gpc.xpshare
 {
@@ -38,6 +40,10 @@ namespace p4gpc.xpshare
 
         // Implementation of the mod.
         private XpShare _xpShare;
+        private Utils _utils;
+
+        // For Reading/Writing Memory
+        private IMemory _memory;
 
         /// <summary>
         /// Entry point for your mod.
@@ -57,8 +63,12 @@ namespace p4gpc.xpshare
             _configuration.ConfigurationUpdated += OnConfigurationUpdated;
 
             /* Your mod code starts here. */
-            // Scan for the address of the xp add function
-            _xpShare = new XpShare(_logger, _hooks, _configuration);
+            _memory = new Memory();
+            using var thisProcess = Process.GetCurrentProcess();
+            int baseAddress = thisProcess.MainModule.BaseAddress.ToInt32();
+
+            _utils = new Utils(_configuration, _logger, baseAddress, _memory);
+            _xpShare = new XpShare(_utils, _memory, _hooks, _configuration);
         }
 
         private void OnConfigurationUpdated(IConfigurable obj)
