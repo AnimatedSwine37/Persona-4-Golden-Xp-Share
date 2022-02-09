@@ -67,7 +67,7 @@ namespace p4gpc.xpshare
             using var thisProcess = Process.GetCurrentProcess();
             int baseAddress = thisProcess.MainModule.BaseAddress.ToInt32();
 
-            _utils = new Utils(_configuration, _logger, baseAddress, _memory);
+            _utils = new Utils(_configuration, _logger, baseAddress);
             _xpShare = new XpShare(_utils, _memory, _hooks, _configuration);
         }
 

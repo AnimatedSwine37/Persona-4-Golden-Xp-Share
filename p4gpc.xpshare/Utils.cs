@@ -16,19 +16,13 @@ namespace p4gpc.xpshare
         public Config Configuration;
         private ILogger _logger;
         private int _baseAddress;
-        private IMemory _memory;
-        private IntPtr _flagLocation;
-        private IntPtr _eventLocation;
-        private IntPtr _inMenuLocation;
-        private IntPtr _itemLocation;
 
-        public Utils(Config configuration, ILogger logger, int baseAddress, IMemory memory)
+        public Utils(Config configuration, ILogger logger, int baseAddress)
         {
             // Initialise fields
             Configuration = configuration;
             _logger = logger;
             _baseAddress = baseAddress;
-            _memory = memory;
         }
       
         public void LogDebug(string message)
